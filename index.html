@@ -25,16 +25,6 @@
       opacity: 0.7;
     }
 
-    #yesBtn {
-      position: relative;
-      z-index: 10;
-    }
-
-    #noBtn {
-      position: relative;
-      z-index: 20;
-    }
-
     @keyframes float {
       0% {
         transform: translateY(100vh) scale(1);
@@ -110,8 +100,20 @@
     });
 
     // No button moves away
-    noBtn.addEventListener("mouseover", moveNoButton);
-    noBtn.addEventListener("click", moveNoButton);
+    function handleNoInteraction(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      moveNoButton();
+    }
+
+    noBtn.addEventListener("mouseover", handleNoInteraction);
+    noBtn.addEventListener("pointerdown", handleNoInteraction);
+    noBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
     let yesScale = 1;
     const yesGrowthFactor = 1.25;
     const noMessages = [
