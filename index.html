@@ -44,15 +44,15 @@
 <body class="bg-gradient-to-br from-pink-100 via-rose-100 to-red-200 min-h-screen flex items-center justify-center overflow-hidden">
 
   <!-- Main Card -->
-  <div class="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl p-10 text-center max-w-md w-full relative z-10">
+  <div id="mainCard" class="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl p-10 text-center max-w-md w-full relative z-10">
 
-    <h1 class="text-3xl md:text-4xl font-bold text-rose-600 mb-4">
+    <p class="text-gray-600 mb-2">
+      Jasmin...
+    </p>
+
+    <h1 class="text-3xl md:text-4xl font-bold text-rose-600 mb-4 mt-0">
       Will You Be My Valentine? 💖
     </h1>
-
-    <p class="text-gray-600 mb-8">
-      I've been meaning to ask you something special...
-    </p>
 
     <!-- Buttons -->
     <div class="flex justify-center gap-6">
@@ -73,12 +73,28 @@
 
     <p id="noMessage" class="mt-6 text-sm text-rose-500 hidden"></p>
 
-    <!-- Hidden Message -->
-    <div id="message" class="hidden mt-8">
-      <h2 class="text-2xl font-bold text-rose-600 mb-2">Yay!!! 🥰</h2>
-      <p class="text-gray-700">You just made my day. Happy Valentine's! ❤️</p>
-    </div>
+  </div>
 
+  <div id="message" class="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl p-10 text-center max-w-md w-full relative z-10 hidden">
+    <img src="happy_face.jpg" alt="Happy face" class="mx-auto mb-6 w-32 h-32 object-contain" />
+    <h2 class="text-2xl font-bold text-rose-600 mb-2">Yay!!! 🥰</h2>
+    <p class="text-gray-700">You just made my day. Happy Valentine's! ❤️</p>
+  </div>
+
+  <div id="smugCard" class="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl p-10 text-center max-w-md w-full relative z-10 hidden">
+    <img src="smug_face.jpeg" alt="Smug face" class="mx-auto mb-6 w-32 h-32 object-contain" />
+    <p class="text-gray-700">Pftttttt. I knew you you couldn't resist saying yes asap 😎</p>
+  </div>
+
+  <div id="sadCard" class="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl p-10 text-center max-w-md w-full relative z-10 hidden">
+    <img src="sad_face.png" alt="Sad face" class="mx-auto mb-6 w-32 h-32 object-contain" />
+    <p class="text-gray-700 mb-6">Oh. I see how it is... 😭</p>
+    <button
+      id="sadRetryBtn"
+      class="px-6 py-3 bg-rose-500 text-white rounded-full font-semibold shadow-md hover:bg-rose-600 transition"
+    >
+      Try again?
+    </button>
   </div>
 
   <!-- Floating Hearts Container -->
@@ -88,15 +104,44 @@
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
     const noMessage = document.getElementById("noMessage");
+    const mainCard = document.getElementById("mainCard");
+    const sadCard = document.getElementById("sadCard");
+    const sadRetryBtn = document.getElementById("sadRetryBtn");
     const message = document.getElementById("message");
+    const smugCard = document.getElementById("smugCard");
     const heartsContainer = document.getElementById("hearts");
 
     // Yes button click
     yesBtn.addEventListener("click", () => {
-      message.classList.remove("hidden");
+      if (noInteractionCount === 0) {
+        smugCard.classList.remove("hidden");
+      } else {
+        message.classList.remove("hidden");
+      }
+      mainCard.classList.add("hidden");
       yesBtn.classList.add("hidden");
       noBtn.classList.add("hidden");
-      createHearts(30);
+      if (noInteractionCount > 0) {
+        createHearts(30);
+      }
+    });
+
+    sadRetryBtn.addEventListener("click", () => {
+      sadCard.classList.add("hidden");
+      mainCard.classList.remove("hidden");
+      message.classList.add("hidden");
+      smugCard.classList.add("hidden");
+      noMessage.classList.add("hidden");
+      yesBtn.classList.remove("hidden");
+      noBtn.classList.remove("hidden");
+      yesScale = 1;
+      yesBtn.style.transform = "scale(1)";
+      noBtn.style.position = "";
+      noBtn.style.left = "";
+      noBtn.style.top = "";
+      noBtn.textContent = "No 😢";
+      noMessageIndex = 0;
+      defaultNoCount = 0;
     });
 
     // No button moves away
@@ -105,6 +150,7 @@
         event.preventDefault();
         event.stopPropagation();
       }
+      noInteractionCount += 1;
       moveNoButton();
     }
 
@@ -118,27 +164,19 @@
     const yesGrowthFactor = 1.25;
     const noMessages = [
       "Why not?",
-      "Are you sure?",
-      "What if I asked nicely?",
+      "What if i got you boba?",
+      "I'll bring snacks?",
       "Pretty please?",
-      "How about it?",
-      "What about a free boba?",
-      "I will owe you a coffee!",
-      "Just say yes?",
       "I will be extra fun, promise.",
-      "I brought snacks!",
-      "You will make my day.",
       "Please say yes?",
       "I practiced my best smile.",
-      "I will plan something cute.",
-      "I can do a happy dance.",
       "No? Even with a cheesy pun?",
       "I will share my fries.",
-      "I will write you a poem.",
       "I will bring flowers.",
-      "How about a tiny maybe?"
     ];
     let noMessageIndex = 0;
+    let defaultNoCount = 0;
+    let noInteractionCount = 0;
 
     function growYesButton() {
       yesScale *= yesGrowthFactor;
@@ -151,6 +189,13 @@
       growYesButton();
       const baseMessage = noMessages[noMessageIndex] ?? "PLEASE!!! 🙏";
       noBtn.textContent = baseMessage + " 😢";
+      if (noMessages[noMessageIndex] === undefined) {
+        defaultNoCount += 1;
+        if (defaultNoCount >= 5) {
+          sadCard.classList.remove("hidden");
+          mainCard.classList.add("hidden");
+        }
+      }
       noMessageIndex += 1;
       const rect = noBtn.getBoundingClientRect();
       const maxX = Math.max(0, window.innerWidth - rect.width)/2;
