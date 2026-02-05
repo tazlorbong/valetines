@@ -25,6 +25,16 @@
       opacity: 0.7;
     }
 
+    #yesBtn {
+      position: relative;
+      z-index: 10;
+    }
+
+    #noBtn {
+      position: relative;
+      z-index: 20;
+    }
+
     @keyframes float {
       0% {
         transform: translateY(100vh) scale(1);
@@ -71,6 +81,8 @@
       </button>
     </div>
 
+    <p id="noMessage" class="mt-6 text-sm text-rose-500 hidden"></p>
+
     <!-- Hidden Message -->
     <div id="message" class="hidden mt-8">
       <h2 class="text-2xl font-bold text-rose-600 mb-2">Yay!!! 🥰</h2>
@@ -85,6 +97,7 @@
   <script>
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
+    const noMessage = document.getElementById("noMessage");
     const message = document.getElementById("message");
     const heartsContainer = document.getElementById("hearts");
 
@@ -100,9 +113,33 @@
     noBtn.addEventListener("mouseover", moveNoButton);
     noBtn.addEventListener("click", moveNoButton);
     let yesScale = 1;
+    const yesGrowthFactor = 1.25;
+    const noMessages = [
+      "Why not?",
+      "Are you sure?",
+      "What if I asked nicely?",
+      "Pretty please?",
+      "How about it?",
+      "What about a free boba?",
+      "I will owe you a coffee!",
+      "Just say yes?",
+      "I will be extra fun, promise.",
+      "I brought snacks!",
+      "You will make my day.",
+      "Please say yes?",
+      "I practiced my best smile.",
+      "I will plan something cute.",
+      "I can do a happy dance.",
+      "No? Even with a cheesy pun?",
+      "I will share my fries.",
+      "I will write you a poem.",
+      "I will bring flowers.",
+      "How about a tiny maybe?"
+    ];
+    let noMessageIndex = 0;
 
     function growYesButton() {
-      yesScale *= 2;
+      yesScale *= yesGrowthFactor;
       yesBtn.style.transform = "scale(" + yesScale + ")";
       yesBtn.style.transformOrigin = "center";
       yesBtn.style.transition = "transform 0.2s";
@@ -110,6 +147,9 @@
 
     function moveNoButton() {
       growYesButton();
+      const baseMessage = noMessages[noMessageIndex] ?? "PLEASE!!! 🙏";
+      noBtn.textContent = baseMessage + " 😢";
+      noMessageIndex += 1;
       const rect = noBtn.getBoundingClientRect();
       const maxX = Math.max(0, window.innerWidth - rect.width)/2;
       const maxY = Math.max(0, window.innerHeight - rect.height)/2;
